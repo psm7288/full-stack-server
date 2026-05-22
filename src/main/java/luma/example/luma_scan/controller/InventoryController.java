@@ -1,23 +1,28 @@
 package luma.example.luma_scan.controller;
 
 import lombok.RequiredArgsConstructor;
+import luma.example.luma_scan.service.InventoryService;
 import luma.example.luma_scan.service.VisionService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
- @RestController
+import lombok.RequiredArgsConstructor;
+import luma.example.luma_scan.entity.Product;
+import java.util.List;
+import org.springframework.web.bind.annotation.*;
+@RestController
 @RequestMapping("/api/inventory")
 @RequiredArgsConstructor
 public class InventoryController {
 
     private final VisionService visionService;
+    private final InventoryService inventoryService;
 
-    // 사진 분석 요청을 받는 API
-    @PostMapping("/analyze")
-    public String analyzeInventory(@RequestBody String imagePath) {
-        visionService.requestVisionAnalysis(imagePath);
-        return "분석 요청이 완료되었습니다. DB를 확인하세요!";
+    @GetMapping("/detect")
+    public String detect(@RequestParam String productId, @RequestParam int count, @RequestParam double confidence) {
+        visionService.processDetection(productId, count, confidence);
+        return "업데이트 성공";
+    }
+
+    @GetMapping("/all")
+    public List<Product> getAllInventory() {
+        return inventoryService.findAllProducts();
     }
 }

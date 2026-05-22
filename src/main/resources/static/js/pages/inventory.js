@@ -91,3 +91,45 @@ if (inventorySearchBtn) {
         alert("검색 조건이 적용되었습니다. 현재는 UI 테스트용 동작입니다.");
     });
 }
+
+// --- 여기서부터 진짜 DB 연동 코드 ---
+
+// 페이지가 로드되면 실행
+document.addEventListener("DOMContentLoaded", function () {
+    loadRealInventory();
+});
+
+function loadRealInventory() {
+    // 1. 서버(Java)에 전체 재고 데이터를 요청
+    fetch('/api/inventory/all')
+        .then(response => response.json())
+        .then(data => {
+            // 2. HTML에서 데이터가 들어갈 표(tbody)를 찾음
+            const tbody = document.querySelector(".table-wrap table tbody");
+            if (!tbody) return;
+
+            tbody.innerHTML = ""; // 기존 가짜(3개) 데이터 삭제
+
+            // 3. 서버에서 받아온 진짜 데이터(data)를 한 줄씩 표에 추가
+            data.forEach(item => {
+                const row = document.createElement("tr");
+
+                // 상태에 따른 색상 클래스 결정
+                let statusClass = "normal";
+                if (item.status === "부족") statusClass = "warning";
+                if (item.status === "위험") statusClass = "danger";
+
+                row.innerHTML = `
+                    <td>${item.productId}</td>
+                    <td>${item.name}</td>
+                    <td>${item.category}</td>
+                    <td>${item.currentQty}</td>
+                    <td>${item.minQty}</td>
+                    <td><span class="stock ${statusClass}">${item.status}</span></td>
+                    <td>${item.lastUpdated || '-'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => console.error("데이터 로딩 실패:", error));
+}

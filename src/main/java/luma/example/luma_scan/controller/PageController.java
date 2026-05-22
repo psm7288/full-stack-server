@@ -30,7 +30,7 @@ public class PageController {
 
     @GetMapping("/inventory")
     public String inventory() {
-        return "pages/inventory";
+        return "pages/analysis";
     }
 
     @GetMapping("/inbound")

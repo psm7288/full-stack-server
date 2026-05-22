@@ -205,3 +205,53 @@ window.addEventListener("beforeunload", function () {
         stopCamera();
     }
 });
+
+// --- 여기서부터 진짜 DB 연동 코드 ---
+
+// 1. 페이지가 로드되면 DB에서 데이터를 가져와 화면의 '3개'를 진짜 숫자로 바꿉니다.
+document.addEventListener("DOMContentLoaded", function () {
+    refreshInventoryDisplay();
+});
+
+function refreshInventoryDisplay() {
+    fetch('/api/inventory/all')
+        .then(response => response.json())
+        .then(data => {
+            // 서버 데이터에서 P001(콜라) 상품 찾기
+            const colaData = data.find(item => item.productId === 'P001');
+
+            if (colaData) {
+                // 화면에서 '콜라' 수량이 적힌 요소를 찾아 숫자를 변경 (99개로!)
+                // HTML 구조상 콜라가 첫 번째 result-item이라고 가정합니다.
+                const resultItems = document.querySelectorAll(".result-list .result-item b");
+                if (resultItems.length > 0) {
+                    resultItems[0].textContent = colaData.currentQty + "개";
+                }
+            }
+        })
+        .catch(error => console.error("데이터 로드 실패:", error));
+}
+
+// 2. [인식 결과 재고 반영] 버튼을 실제로 작동하게 만듭니다.
+if (saveResultBtn) {
+    // 기존의 단순 alert 로직을 아래로 교체하세요.
+    saveResultBtn.onclick = function() {
+        // 예시: 콜라(P001) 수량을 현재 감지된 수량으로 업데이트 요청
+        // 실제로는 화면에 감지된 숫자를 읽어와야 하지만, 테스트를 위해 77로 쏴보겠습니다.
+        const testUpdateQty = 77;
+
+        fetch(`/api/inventory/detect?productId=P001&count=${testUpdateQty}&confidence=0.98`)
+            .then(response => {
+                if(response.ok) {
+                    alert("DB에 성공적으로 반영되었습니다!");
+                    refreshInventoryDisplay(); // 반영 후 화면 숫자 다시 불러오기
+                }
+            })
+            .catch(error => alert("반영 실패: " + error));
+    };
+}
+
+// 1초마다 서버에 "새로운 데이터 있어?"라고 물어보고 화면을 갱신합니다.
+setInterval(function() {
+    refreshInventoryDisplay();
+}, 1000); // 1000ms = 1초. 더 빠르게 하고 싶으면 500으로 조절 가능합니다.

@@ -1,39 +1,32 @@
 package luma.example.luma_scan.service;
 
-import luma.example.luma_scan.dto.DetectionResponse;
-import luma.example.luma_scan.entity.Inventory;
-import luma.example.luma_scan.repository.InventoryRepository;
+import luma.example.luma_scan.entity.DetectionResult;
+import luma.example.luma_scan.entity.Product;
+import luma.example.luma_scan.repository.DetectionResultRepository;
+import luma.example.luma_scan.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient; // 이게 꼭 있어야 WebClient 빨간줄이 사라집니다
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class VisionService {
 
-    private final InventoryRepository inventoryRepository;
-    private final WebClient webClient = WebClient.create("http://ai-server-url:8000"); // AI 서버 주소
+    private final ProductRepository productRepository;
+    private final DetectionResultRepository detectionResultRepository;
 
     @Transactional
-    public void requestVisionAnalysis(String imagePath) {
-        // 1. AI 서버에 분석 요청 (POST)
-        List<DetectionResponse> results = webClient.post()
-                .uri("/predict")
-                .bodyValue(Map.of("image_url", imagePath))
-                .retrieve()
-                .bodyToFlux(DetectionResponse.class)
-                .collectList()
-                .block();
+    public void processDetection(String productId, int count, double confidence) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("상품 없음: " + productId));
 
-        // 2. 결과값을 DB에 연동하여 업데이트
-        if (results != null) {
-            results.forEach(res -> {
-                inventoryRepository.findByItemName(res.getItemName())
-                        .ifPresent(item -> item.updateQuantity(res.getCount()));
-            });
-        }
+        product.setCurrentQty(count);
+        product.setStatus(product.getCurrentQty() <= product.getMinQty() ? "부족" : "정상");
+
+        DetectionResult result = new DetectionResult();
+        result.setProduct(product);
+        result.setDetectedQty(count);
+        result.setConfidence(confidence);
+        detectionResultRepository.save(result);
     }
 }
