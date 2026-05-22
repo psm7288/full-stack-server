@@ -1,0 +1,29 @@
+<header class="header" th:fragment="header">
+    <div class="brand">
+        <a href="/home" class="brand-link">
+            <div class="brand-mark">LS</div>
+            <div>
+                <h1>Luma Scan</h1>
+                <p>실시간 재고 인식 콘솔</p>
+            </div>
+        </a>
+    </div>
+
+    <nav class="nav">
+        <a href="/home">대시보드</a>
+        <a href="/analysis">영상 분석</a>
+        <a href="/inventory">재고 현황</a>
+        <a href="/inbound">반입 관리</a>
+        <a href="/outbound">반출 관리</a>
+    </nav>
+
+    <div class="header-actions">
+        <div class="status-chip">
+            <span class="chip-dot active"></span>
+            <span>AI 서버 정상</span>
+        </div>
+
+        <a href="/analysis" class="btn btn-primary">분석 시작</a>
+        <a href="/login" class="btn btn-outline">로그아웃</a>
+    </div>
+</header>

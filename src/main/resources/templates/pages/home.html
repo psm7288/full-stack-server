@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luma Scan 대시보드</title>
+
+    <link rel="stylesheet" href="/css/common/reset.css">
+    <link rel="stylesheet" href="/css/common/layout.css">
+    <link rel="stylesheet" href="/css/common/button.css">
+    <link rel="stylesheet" href="/css/common/table.css">
+    <link rel="stylesheet" href="/css/pages/dashboard.css">
+</head>
+<body>
+
+<div class="app">
+
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main class="main">
+
+        <section class="page-title">
+            <div>
+                <p>Inventory Dashboard</p>
+                <h2>재고 인식 통합 대시보드</h2>
+                <span>
+                    실시간 영상 분석, 재고 수량, 반입·반출 기록, 시스템 상태를 한 화면에서 확인합니다.
+                </span>
+            </div>
+
+            <div class="dashboard-actions">
+                <a href="/analysis" class="btn btn-primary">영상 분석 시작</a>
+                <a href="/inventory" class="btn btn-outline">재고 확인</a>
+            </div>
+        </section>
+
+        <section class="summary-grid">
+            <article class="summary-card">
+                <span>전체 상품</span>
+                <strong>128</strong>
+                <p>등록된 상품 수</p>
+            </article>
+
+            <article class="summary-card warning">
+                <span>부족 재고</span>
+                <strong>12</strong>
+                <p>최소 수량 이하 상품</p>
+            </article>
+
+            <article class="summary-card">
+                <span>오늘 분석</span>
+                <strong>18</strong>
+                <p>영상 및 이미지 분석 건수</p>
+            </article>
+
+            <article class="summary-card">
+                <span>평균 신뢰도</span>
+                <strong>94%</strong>
+                <p>최근 분석 결과 기준</p>
+            </article>
+        </section>
+
+        <section class="dashboard-grid">
+
+            <article class="card">
+                <div class="section-head">
+                    <div>
+                        <h3>최근 분석 결과</h3>
+                        <p>AI가 최근 인식한 상품 목록입니다.</p>
+                    </div>
+                    <a href="/analysis" class="btn btn-outline">전체 보기</a>
+                </div>
+
+                <div class="analysis-list">
+                    <div class="analysis-item">
+                        <div>
+                            <strong>콜라</strong>
+                            <span>음료 / 신뢰도 96%</span>
+                        </div>
+                        <b>3개</b>
+                    </div>
+
+                    <div class="analysis-item">
+                        <div>
+                            <strong>사이다</strong>
+                            <span>음료 / 신뢰도 91%</span>
+                        </div>
+                        <b>2개</b>
+                    </div>
+
+                    <div class="analysis-item">
+                        <div>
+                            <strong>생수</strong>
+                            <span>음료 / 신뢰도 88%</span>
+                        </div>
+                        <b>1개</b>
+                    </div>
+                </div>
+            </article>
+
+            <article class="card">
+                <div class="section-head">
+                    <div>
+                        <h3>시스템 상태</h3>
+                        <p>서비스 구성 요소의 연결 상태입니다.</p>
+                    </div>
+                </div>
+
+                <div class="system-grid">
+                    <div>
+                        <span>Spring Boot 서버</span>
+                        <b class="success">실행 중</b>
+                    </div>
+
+                    <div>
+                        <span>Python YOLO 서버</span>
+                        <b class="success">온라인</b>
+                    </div>
+
+                    <div>
+                        <span>MariaDB</span>
+                        <b class="neutral">대기 중</b>
+                    </div>
+
+                    <div>
+                        <span>카메라 입력</span>
+                        <b class="neutral">대기 중</b>
+                    </div>
+                </div>
+            </article>
+
+        </section>
+
+        <section class="dashboard-grid bottom">
+
+            <article class="card">
+                <div class="section-head">
+                    <div>
+                        <h3>부족 재고 상품</h3>
+                        <p>확인이 필요한 상품입니다.</p>
+                    </div>
+                    <a href="/inventory" class="btn btn-outline">재고 관리</a>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>상품 ID</th>
+                            <th>상품명</th>
+                            <th>현재 수량</th>
+                            <th>최소 수량</th>
+                            <th>상태</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>P-002</td>
+                            <td>사이다</td>
+                            <td>8</td>
+                            <td>10</td>
+                            <td><span class="stock warning">부족</span></td>
+                        </tr>
+                        <tr>
+                            <td>P-003</td>
+                            <td>생수</td>
+                            <td>3</td>
+                            <td>10</td>
+                            <td><span class="stock danger">위험</span></td>
+                        </tr>
+                        <tr>
+                            <td>P-009</td>
+                            <td>초코바</td>
+                            <td>5</td>
+                            <td>12</td>
+                            <td><span class="stock warning">부족</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="card">
+                <div class="section-head">
+                    <div>
+                        <h3>최근 처리 기록</h3>
+                        <p>분석, 반입, 반출 처리 이력입니다.</p>
+                    </div>
+                </div>
+
+                <div class="log-list">
+                    <div class="log-item">
+                        <span>13:44</span>
+                        <div>
+                            <strong>반출 등록 완료</strong>
+                            <p>콜라 12개가 1층 매대 보충으로 반출되었습니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="log-item">
+                        <span>13:20</span>
+                        <div>
+                            <strong>실시간 영상 분석 완료</strong>
+                            <p>콜라 3개, 사이다 2개, 생수 1개 감지</p>
+                        </div>
+                    </div>
+
+                    <div class="log-item">
+                        <span>12:50</span>
+                        <div>
+                            <strong>반입 등록 완료</strong>
+                            <p>생수 30개가 창고 재고로 반입되었습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/js/common/nav.js"></script>
+</body>
+</html>
